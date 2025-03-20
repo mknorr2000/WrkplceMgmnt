@@ -1,0 +1,28 @@
+/* src/components/NavBar.css */
+
+.navbar {
+    background-color: #009999; 
+    padding: 30px;
+  }
+  
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar-links li {
+    display: inline-block;
+  }
+  
+  .navbar-links a {
+    color: #FFFFFF; /* Weiß für Text */
+    text-decoration: none;
+    padding: 10px 20px;
+    display: block;
+  }
+  
+
+  

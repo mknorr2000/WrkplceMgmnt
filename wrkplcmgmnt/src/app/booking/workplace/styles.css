@@ -1,0 +1,58 @@
+.workplace-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .workplace {
+    width: 200px;
+    height: 150px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .workplace.available {
+    background-color: #4CAF50; /* Grün für verfügbare Plätze */
+    color: white;
+  }
+  
+  .workplace.booked {
+    background-color: #f44336; /* Rot für gebuchte Plätze */
+    color: white;
+  }
+  
+  .workplace:hover {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  
+  /* Stil für den ausgewählten Arbeitsplatz */
+  .workplace.clicked {
+    background-color: red; /* Rot für den ausgewählten Arbeitsplatz */
+    color: white;
+  }
+  
+  .book-button {
+    position: fixed;
+    bottom: 250px; /* Positioniere den Button 20px vom unteren Rand der Seite */
+    left: 50%;
+    transform: translateX(-50%); /* Zentriert den Button horizontal */
+    padding: 10px 50px;
+    background-color: #009999;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 10; /* Stellt sicher, dass der Button immer oben liegt */
+  }
+  
+  
+ 
+  
