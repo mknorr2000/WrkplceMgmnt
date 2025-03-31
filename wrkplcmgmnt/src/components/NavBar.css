@@ -1,28 +1,41 @@
 /* src/components/NavBar.css */
 
 .navbar {
-    background-color: #009999; 
-    padding: 30px;
-  }
-  
-  .navbar-links {
-    list-style: none;
-    display: flex;
-    justify-content: space-around;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .navbar-links li {
-    display: inline-block;
-  }
-  
-  .navbar-links a {
-    color: #FFFFFF; /* Weiß für Text */
-    text-decoration: none;
-    padding: 10px 20px;
-    display: block;
-  }
-  
+  background-color: #009999; /* Eine erfrischende, moderne Farbe */
+  padding: 20px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Schatten für einen schwebenden Effekt */
+}
 
-  
+.navbar-links {
+  list-style: none;
+  display: flex;
+  justify-content: center; /* Zentriert die Navigation */
+  gap: 40px; /* Abstand zwischen den Links */
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  display: inline-block;
+}
+
+.navbar-links a {
+  color: #ffffff; /* Weiß für Text */
+  text-decoration: none;
+  padding: 12px 25px; /* Größerer Abstand für angenehme Klickfläche */
+  font-size: 18px; /* Angemessene Schriftgröße */
+  font-weight: 500; /* Etwas fetter für bessere Lesbarkeit */
+  border-radius: 30px; /* Abgerundete Ecken */
+  background-color: #00b3b3; /* Gleichmäßige Hintergrundfarbe */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Sanfte Übergänge */
+}
+
+.navbar-links a:hover {
+  background-color: #008080; /* Etwas dunklerer Hintergrund bei Hover */
+  transform: scale(1.1); /* Vergrößern beim Hover */
+}
+
+.navbar-links a:active {
+  transform: scale(1); /* Normale Größe bei aktivem Klick */
+  background-color: #006666; /* Noch dunklerer Hintergrund */
+}

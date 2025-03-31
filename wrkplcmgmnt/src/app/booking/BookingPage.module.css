@@ -1,0 +1,71 @@
+.container {
+     font-family: 'Arial', sans-serif;
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 20px;
+ 
+     text-align: center;
+   }
+   
+   .heading {
+     color: #2c3e50;
+     font-size: 36px;
+     margin-bottom: 20px;
+   }
+   
+   .description {
+     color: #7f8c8d;
+     font-size: 18px;
+     margin-bottom: 30px;
+   }
+   
+   .splitContainer {
+     display: flex;
+     justify-content: space-around;
+     align-items: center;
+     height: 80vh; /* Setzt die Höhe auf 100% des Bildschirms */
+   }
+   
+   .bookingSection {
+     background-color: #fff;
+     height: 20vh;
+     width: 500px; /* Feste Breite für jede Sektion */
+     padding: 20px;
+     border-radius: 8px;
+     text-align: center;
+     display: flex;
+     flex-direction: column; /* Vertikale Ausrichtung der Inhalte */
+     justify-content: center; /* Zentriert die Inhalte vertikal */
+     align-items: center; /* Zentriert die Inhalte horizontal */
+   }
+   
+   .bookingSection h2 {
+     color: #2c3e50;
+     font-size: 36px;
+     margin-bottom: 20px;
+   }
+   .bookingSection:hover {
+     background-color: #009999;
+     transition: color 0.3s ease, background-color 0.3s ease;
+   }
+
+   .bookingSection img {
+     width: 80%; /* Das Bild nimmt 80% der Breite ein */
+     height: auto;
+     border-radius: 8px;
+     margin-bottom: 20px;
+   }
+   
+   .link {
+     text-decoration: none;
+     color: #009999;
+     font-size: 18px;
+     padding: 10px 10px;
+     background-color: #009999;
+     border-radius: 15px;
+     transition: color 0.3s ease, background-color 0.3s ease;
+     margin-top: 10px;
+   }
+   
+
+   
