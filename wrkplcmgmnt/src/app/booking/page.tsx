@@ -10,7 +10,7 @@ const BookingPage = () => {
       <h1 className={styles.heading}>Welcome to Workplace - Management Web-App!</h1>
       <p className={styles.description}>Here you can easily book a work or parking space.</p>
       <div>
-        <img src="wrkplcmgmnt/public/workplaceSymbol.png"></img>
+        <img src="/booking/workplaceSymbol.png"></img>
       </div>
       <div className={styles.splitContainer}>
         <a href="/booking/workplace" className={styles.link}>
