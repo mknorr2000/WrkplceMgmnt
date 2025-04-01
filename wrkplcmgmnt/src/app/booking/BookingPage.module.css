@@ -1,35 +1,34 @@
 .container {
      font-family: 'Arial', sans-serif;
-     max-width: 1200px;
+     max-width: 1300px;
      margin: 0 auto;
      padding: 20px;
- 
      text-align: center;
    }
-   
    .heading {
-     color: #2c3e50;
+     color: black;
      font-size: 36px;
      margin-bottom: 20px;
    }
-   
    .description {
-     color: #7f8c8d;
+     color: black;
      font-size: 18px;
      margin-bottom: 30px;
+     padding-bottom: 100px;
    }
    
    .splitContainer {
      display: flex;
      justify-content: space-around;
      align-items: center;
-     height: 80vh; /* Setzt die Höhe auf 100% des Bildschirms */
+     height: 20vh;
+
    }
    
    .bookingSection {
      background-color: #fff;
-     height: 20vh;
-     width: 500px; /* Feste Breite für jede Sektion */
+     height: 120px;
+     width: 300px; /* Feste Breite für jede Sektion */
      padding: 20px;
      border-radius: 8px;
      text-align: center;
@@ -40,9 +39,13 @@
    }
    
    .bookingSection h2 {
-     color: #2c3e50;
+     color: black;
      font-size: 36px;
      margin-bottom: 20px;
+   }
+   .bookingSection:hover h2{
+    color: #fff;
+    transition: color 0.3s ease, background-color 0.3s ease;
    }
    .bookingSection:hover {
      background-color: #009999;
@@ -67,5 +70,15 @@
      margin-top: 10px;
    }
    
-
-   
+   .symbols{
+    display: flex;
+    align-items:center;
+    justify-content: space-around;
+    height: 300px;
+   }
+   .symbols img{
+    width: 280px;
+    height: 280px;
+   }
+    
+ 
