@@ -1,3 +1,4 @@
+/* Container styling for centering and layout */
 .container {
   font-family: 'Arial', sans-serif;
   max-width: 1300px;
@@ -6,26 +7,32 @@
   text-align: center;
 }
 
+/* Heading styling */
 .heading {
   color: black;
   font-size: 36px;
   margin-bottom: 20px;
 }
 
+/* Description text styling */
 .description {
   color: black;
   font-size: 18px;
   margin-bottom: 30px;
   padding-bottom: 100px;
 }
+
+/* Flexbox container for text input and alignment */
 .textwrite {
-     display: flex;
-     align-items: center;
-     flex-direction: column;
-     gap: 20px;
-   }
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Text input field styling */
 .text {
-     color: black;
+  color: black;
   border: solid 3px #009999;
   border-radius: 40px;
   background: transparent;
@@ -33,6 +40,8 @@
   width: 350px;
   height: 50px;
 }
+
+/* Button styling */
 .button {
   background-color: transparent;
   font-size: 16px;
@@ -43,11 +52,13 @@
   cursor: pointer;
 }
 
+/* Button hover effect */
 .button:hover {
   background-color: #009999;
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
+/* Button text styling */
 .button h3 {
   font-size: 16px;
   color: black;
@@ -55,6 +66,7 @@
   justify-content: center;
 }
 
+/* Button text hover effect */
 .button h3:hover {
   color: #fff;
   transition: color 0.3s ease, background-color 0.3s ease;

@@ -27,7 +27,7 @@ const BookingPage = () => {
           </a>
           <a href="/booking/parkplace" className={styles.link}>
           <div className={styles.bookingSection}>
-          <h2>OverView Booking</h2>
+          <h2>My Bookings</h2>
           </div>
           </a>
           </div> 
