@@ -1,4 +1,4 @@
-"use client"; // Если используешь Next.js App Router
+"use client";
 
 import React, { useState } from "react";
 import styles from "./MasterPage.module.css";
@@ -6,37 +6,47 @@ import styles from "./MasterPage.module.css";
 export default function Admin() {
   const [email, setEmail] = useState("");
   const [department, setDepartment] = useState("");
-  const [password, setPassword] = useState(""); // Пока не используется в API, но можно расширить
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false); // Steuert das Popup
 
   const handleCreateUser = async () => {
-    setLoading(true);
-    setMessage("");
+    setError(null);
+    setSuccess(false);
 
-    const response = await fetch("/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, department }), // role не передаем, оно "user" по умолчанию
-    });
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
 
-    const data = await response.json();
-    setLoading(false);
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, department, password }),
+      });
 
-    if (response.ok) {
-      setMessage(`✅ Пользователь создан: ID ${data.id}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Error creating user");
+      }
+
+      setSuccess(true);
       setEmail("");
       setDepartment("");
       setPassword("");
-    } else {
-      setMessage(`❌ Ошибка: ${data.error}`);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
     <main className={styles.container}>
       <h1 className={styles.heading}>Admin Page</h1>
-      <p className={styles.description}>Hier Admins do their Stuff.</p>
+      <p className={styles.description}>Here admins manage users.</p>
 
       <div className={styles.textwrite}>
         <input
@@ -49,7 +59,7 @@ export default function Admin() {
         <input
           className={styles.text}
           type="text"
-          placeholder="Departement"
+          placeholder="Department"
           value={department}
           onChange={(e) => setDepartment(e.target.value)}
         />
@@ -61,11 +71,21 @@ export default function Admin() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className={styles.button} onClick={handleCreateUser}>
-          <h3>{loading ? "Creating..." : "Create a User"}</h3>
+          <h3>Create a User</h3>
         </div>
-      </div>
 
-      {message && <p className={styles.message}>{message}</p>}
+        {error && <p className={styles.error}>{error}</p>}
+
+        {/* ✅ Modal Popup */}
+        {success && (
+          <div className={styles.popup}>
+            <div className={styles.popupContent}>
+              <h3>User successfully created!</h3>
+              <button onClick={() => setSuccess(false)}>OK</button>
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   );
 }

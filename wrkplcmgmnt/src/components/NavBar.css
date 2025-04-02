@@ -1,41 +1,47 @@
-/* src/components/NavBar.css */
-
 .navbar {
-  background-color: #009999; /* Eine erfrischende, moderne Farbe */
-  padding: 20px 0;
+  background-color: #ffffff; /* Weiß für den Hintergrund */
+  padding: 35px 0; /* Erhöht die Höhe der Navbar */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Schatten für einen schwebenden Effekt */
 }
 
 .navbar-links {
   list-style: none;
-  display: flex;
-  justify-content: center; /* Zentriert die Navigation */
-  gap: 40px; /* Abstand zwischen den Links */
+  display: flex; /* Flexbox für horizontale Anordnung */
+  justify-content: flex-start; /* Links ausgerichtet */
+  gap: 60px; /* Abstand zwischen den Links */
   margin: 0;
   padding: 0;
+  margin-left: 100px; /* Schiebt die Links leicht nach rechts */
 }
 
 .navbar-links li {
-  display: inline-block;
+  display: flex;
+  align-items: center; /* Aligns die Icons und den Text auf gleicher Höhe */
+}
+
+.nav-item {
+  display: flex;
+  gap: 10px; /* Adds spacing between the icon and text */
+  text-decoration: none; /* Ensures no underline */
+  position: relative; /* Prevents layout shift */
+  box-sizing: border-box; /* Ensures consistent box model */
+}
+
+.nav-item span {
+  position: relative; /* Allows the pseudo-element to be positioned relative to the text */
 }
 
 .navbar-links a {
-  color: #ffffff; /* Weiß für Text */
-  text-decoration: none;
-  padding: 12px 25px; /* Größerer Abstand für angenehme Klickfläche */
-  font-size: 18px; /* Angemessene Schriftgröße */
-  font-weight: 500; /* Etwas fetter für bessere Lesbarkeit */
-  border-radius: 30px; /* Abgerundete Ecken */
-  background-color: #00b3b3; /* Gleichmäßige Hintergrundfarbe */
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Sanfte Übergänge */
+  color: #333333; /* Dunkelgrau für den Text */
+  font-size: 25px; /* Größere Schriftgröße */
+  font-weight: 600; /* Etwas fetter für bessere Lesbarkeit */
 }
+
 
 .navbar-links a:hover {
-  background-color: #008080; /* Etwas dunklerer Hintergrund bei Hover */
-  transform: scale(1.1); /* Vergrößern beim Hover */
+  color: #008080; /* Ändert die Farbe beim Hover */
 }
 
-.navbar-links a:active {
-  transform: scale(1); /* Normale Größe bei aktivem Klick */
-  background-color: #006666; /* Noch dunklerer Hintergrund */
+.navbar-links a:hover::after {
+  width: 100%; /* Underline becomes fully visible */
 }

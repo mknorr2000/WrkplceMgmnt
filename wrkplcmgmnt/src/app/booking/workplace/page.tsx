@@ -1,61 +1,73 @@
 'use client';
 
 import React, { useState } from 'react';
-import './styles.css';
+import styles from './BookWorkplacePage.module.css'; // Import the CSS module
 
 const WorkplaceBookingPage = () => {
-  // State to keep track of the currently selected workplace
-  const [selectedWorkplace, setSelectedWorkplace] = useState<string | null>(null); 
-  
-  // State to track the booked workplace
-  const [booked, setBooked] = useState<string | null>(null); 
+  // State to track the currently selected workplace
+  const [selectedWorkplace, setSelectedWorkplace] = useState<string | null>(null);
 
-  // Function to handle click on a workplace (when the user selects a workplace)
+  // State to track the booked workplace
+  const [booked, setBooked] = useState<string | null>(null);
+
+  // Function to handle workplace selection
   const handleClick = (workplace: string) => {
-    // Only allow selecting a workplace if nothing is booked yet
+    // Allow selection only if no workplace is booked
     if (!booked) {
-      setSelectedWorkplace(workplace); // Set the selected workplace
+      setSelectedWorkplace(workplace);
     }
   };
 
-  // Function to handle the "Book" button click
+  // Function to handle booking action
   const handleBookClick = () => {
     if (selectedWorkplace) {
-      // If a workplace is selected, mark it as booked
+      // Mark the selected workplace as booked
       setBooked(selectedWorkplace);
-      alert(`${selectedWorkplace} has been booked!`); // Alert that the workplace is booked
+      alert(`${selectedWorkplace} has been booked!`);
     } else {
-      alert('Please select a workplace first!'); // Alert if no workplace is selected
+      alert('Please select a workplace first!');
     }
   };
 
   return (
     <div>
-      <h1>Book a workplace</h1>
-      <p>Here you can book your workplace</p>
+      <h1>Book a Workplace</h1>
+      <p>Select and book your workplace below:</p>
 
-      <div className="workplace-container">
+      <div className={styles['workplace-container']}>
+        {/* Workplace A1 */}
         <div
-          className={`workplace available ${selectedWorkplace === 'A1' && !booked ? 'clicked' : ''} ${booked === 'A1' ? 'booked' : ''}`}
+          className={`${styles.workplace} ${styles.available} ${
+            selectedWorkplace === 'A1' && !booked ? styles.clicked : ''
+          } ${booked === 'A1' ? styles.booked : ''}`}
           onClick={() => handleClick('A1')}
         >
           Workplace A1
         </div>
+
+        {/* Workplace B1 */}
         <div
-          className={`workplace available ${selectedWorkplace === 'B1' && !booked ? 'clicked' : ''} ${booked === 'B1' ? 'booked' : ''}`}
+          className={`${styles.workplace} ${styles.available} ${
+            selectedWorkplace === 'B1' && !booked ? styles.clicked : ''
+          } ${booked === 'B1' ? styles.booked : ''}`}
           onClick={() => handleClick('B1')}
         >
           Workplace B1
         </div>
+
+        {/* Workplace C1 */}
         <div
-          className={`workplace available ${selectedWorkplace === 'C1' && !booked ? 'clicked' : ''} ${booked === 'C1' ? 'booked' : ''}`}
+          className={`${styles.workplace} ${styles.available} ${
+            selectedWorkplace === 'C1' && !booked ? styles.clicked : ''
+          } ${booked === 'C1' ? styles.booked : ''}`}
           onClick={() => handleClick('C1')}
         >
           Workplace C1
         </div>
       </div>
 
-      <button className="book-button" onClick={handleBookClick}>
+      {/* Book Button */}
+      <button className={styles['book-button']} onClick={handleBookClick}>
         Book
       </button>
     </div>

@@ -1,5 +1,5 @@
-// src/components/NavBar.tsx
 import Link from 'next/link';
+import Image from 'next/image'; // Importiere Image von Next.js
 import './NavBar.css'; // Importiere die CSS-Datei für die Navigation
 
 const NavBar = () => {
@@ -7,13 +7,40 @@ const NavBar = () => {
     <nav className="navbar">
       <ul className="navbar-links">
         <li>
-          <Link href="/booking">Home</Link>
-        </li>        
-        <li>
-          <Link href="/mybookings">My Bookings</Link>
+          <Link href="/booking" className="nav-item">
+            <Image 
+              src="/images/NavHome.png" 
+              alt="Home Icon" 
+              className="nav-icon" 
+              width={24} 
+              height={24} 
+            />
+            <span>Home</span>
+          </Link>
         </li>
         <li>
-          <Link href="/admin">Admin</Link>
+          <Link href="/mybookings" className="nav-item">
+            <Image 
+              src="/images/NavOverview.png" 
+              alt="Overview Icon" 
+              className="nav-icon" 
+              width={24} 
+              height={24} 
+            />
+            <span>My Bookings</span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/admin" className="nav-item">
+            <Image 
+              src="/images/NavAdmin.png" 
+              alt="Admin Icon" 
+              className="nav-icon" 
+              width={24} 
+              height={24} 
+            />
+            <span>Admin</span>
+          </Link>
         </li>
       </ul>
     </nav>

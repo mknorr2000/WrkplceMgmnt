@@ -1,0 +1,207 @@
+/* Parking spots in front of the office */
+.frontParking {
+  /* Dimensions and styling */
+  width: 75px;
+  height:120px;
+  background-color: white; /* Color for parking spots in front of the office */
+  border-radius: 10px;
+  border: solid 5px #009999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Hover effect for parking spots in front of the office */
+.frontParking:hover {
+  transform: scale(1.1);
+}
+
+/* Parking spots to the right of the office */
+.rightParking {
+  /* Dimensions and styling */
+  width: 120px;
+  height: 70px;
+  border: solid 5px #009999; /* Color for parking spots to the right of the office */
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Hover effect for parking spots to the right of the office */
+.rightParking:hover {
+  transform: scale(1.1);
+}
+
+/* States for parking spots */
+
+/* Style for selected parking spots */
+.clicked {
+  border: solid 5px white; /* Border color for selected parking spots */
+  background-color: #009999; /* Color for selected parking spots */
+  color: white;
+}
+
+/* Style for booked parking spots */
+.booked {
+  background-color: #f44336; /* Color for booked parking spots */
+  color: white;
+}
+
+/* Additional styles for layout */
+
+/* Title style */
+.h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+/* Container for the parking plan */
+.plan-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+}
+
+/* Centered parking spots layout */
+.center-parkplace {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 20px; /* Space between the title and the plan */
+}
+
+/* Office building label */
+.office-building {
+  background-color: #009999; /* Light blue background for the office building label */
+  width: 500px;
+  border-radius: 25px;
+  height: 200px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.office-building h1{
+  color: white;
+  padding-top: 60px;
+  font-size: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* Container for all parking spots */
+.parkplaces-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Row layout for parking spots */
+.parkplaces-row {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px; /* Space between the horizontal row and the vertical column */
+}
+
+/* Column layout for parking spots */
+.parkplaces-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: absolute;
+  margin-left: 650px;
+}
+
+/* Style for the booking button */
+.book-button {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  padding: 25px 50px;
+  background-color: #009999;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 10;
+}
+
+/* Legend styles */
+.legend {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+  padding: 100px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  gap: 20px;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 40px; /* Adjusted size */
+  height: 40px;
+  border-radius: 5px;
+  border: 3px solid #000;
+}
+
+.legend-box p{
+  display: flex;
+}
+
+.legend-text {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  gap: 10px; /* Add spacing between box and text */
+  flex-direction: row; /* Ensure text is to the right of the box */
+}
+
+/* New container for layout adjustments */
+.layout-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 20px;
+}
+
+.date-picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-self: flex-start;
+  margin-left: 124px;
+}
+
+.date-picker, .start-time, .end-time {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Adjusted container for bottom elements */
+.bottom-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto 0;
+}
