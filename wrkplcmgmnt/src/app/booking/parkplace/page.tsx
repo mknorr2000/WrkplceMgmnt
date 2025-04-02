@@ -1,31 +1,58 @@
-'use client';
-
-import React, { useState } from 'react';
-import styles from './BookParkplacePage.module.css'; // Import the CSS module
+"use client"
+import React, { useState, useEffect } from 'react';
+import styles from './BookParkplacePage.module.css';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const ParkplaceBookingPage = () => {
-  // State variables to manage selected parking spot, date, and time
   const [selectedParkplace, setSelectedParkplace] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
+  const [bookedParkplaces, setBookedParkplaces] = useState<string[]>([]);
 
-  // Handle parking spot selection
+  useEffect(() => {
+    fetch('/api/parkplaces/booked')
+      .then((res) => res.json())
+      .then((data) => setBookedParkplaces(data));
+  }, []);
+
   const handleClick = (parkplace: string) => {
-    setSelectedParkplace((prev) => (prev === parkplace ? null : parkplace));
+    if (Array.isArray(bookedParkplaces) && !bookedParkplaces.includes(parkplace)) {
+      setSelectedParkplace((prev) => (prev === parkplace ? null : parkplace));
+    }
   };
 
-  // Determine CSS class for a parking spot based on its selection status
-  const getParkplaceClass = (parkplace: string) =>
-    selectedParkplace === parkplace ? `${styles.clicked}` : '';
+  const handleBooking = async () => {
+    if (!selectedParkplace || !selectedDate || !startTime || !endTime) return;
+
+    const response = await fetch(`/api/parkplaces/${selectedParkplace}/bookings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        start_time: startTime.toISOString(),
+        end_time: endTime.toISOString(),
+      }),
+    });
+
+    if (response.ok) {
+      setBookedParkplaces((prev) => [...prev, selectedParkplace]);
+      setSelectedParkplace(null);
+      setStartTime(null);
+      setEndTime(null);
+    }
+  };
+
+  const getParkplaceClass = (parkplace: string) => {
+    if (Array.isArray(bookedParkplaces) && bookedParkplaces.includes(parkplace)) {
+      return styles.booked;
+    }
+    return selectedParkplace === parkplace ? styles.clicked : '';
+  };
 
   return (
     <div className={styles['plan-container']}>
       <h1>Book a Parking Spot</h1>
-
-      {/* Date and time pickers */}
       <div className={styles['date-picker-container']}>
         <label htmlFor="date-picker">Select a Date:</label>
         <ReactDatePicker
@@ -35,7 +62,6 @@ const ParkplaceBookingPage = () => {
           className={styles['date-picker']}
           dateFormat="yyyy-MM-dd"
         />
-
         <label htmlFor="start-time">Start Time:</label>
         <ReactDatePicker
           id="start-time"
@@ -48,7 +74,6 @@ const ParkplaceBookingPage = () => {
           timeFormat="HH:mm"
           dateFormat="HH:mm"
         />
-
         <label htmlFor="end-time">End Time:</label>
         <ReactDatePicker
           id="end-time"
@@ -62,11 +87,8 @@ const ParkplaceBookingPage = () => {
           dateFormat="HH:mm"
         />
       </div>
-
-      {/* Office building and parking spots */}
       <div className={styles['office-building']}>
         <div className={styles['parkplaces-column']}>
-          {/* Parking spots to the right of the office */}
           {Array.from({ length: 6 }, (_, index) => {
             const parkplaceId = `right${index + 1}`;
             return (
@@ -82,9 +104,7 @@ const ParkplaceBookingPage = () => {
         </div>
         <h1>Office Building</h1>
       </div>
-
       <div className={styles['parkplaces-container']}>
-        {/* Parking spots in front of the office */}
         <div className={styles['center-parkplace']}>
           {[...Array(2)].map((_, rowIndex) => (
             <div key={`row-${rowIndex}`} className={styles['parkplaces-row']}>
@@ -104,28 +124,22 @@ const ParkplaceBookingPage = () => {
           ))}
         </div>
       </div>
-
-      {/* Booking button */}
       <button
         className={styles['book-button']}
+        onClick={handleBooking}
         disabled={!selectedParkplace || !selectedDate || !startTime || !endTime}
       >
         Book Parking Spot
       </button>
-
-      {/* Legend for parking spot status */}
       <div className={styles['legend']}>
         <div className={styles['legend-text']}>
-          <span className={styles['legend-box']} style={{ backgroundColor: 'red' }}></span>
-          - Booked
+          <span className={styles['legend-box']} style={{ backgroundColor: 'red' }}></span> - Booked
         </div>
         <div className={styles['legend-text']}>
-          <span className={styles['legend-box']} style={{ backgroundColor: 'green' }}></span>
-          - Available
+          <span className={styles['legend-box']} style={{ backgroundColor: 'green' }}></span> - Available
         </div>
         <div className={styles['legend-text']}>
-          <span className={styles['legend-box']} style={{ backgroundColor: '#009999' }}></span>
-          - Selected Place
+          <span className={styles['legend-box']} style={{ backgroundColor: '#009999' }}></span> - Selected Place
         </div>
       </div>
     </div>

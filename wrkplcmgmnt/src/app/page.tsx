@@ -19,15 +19,6 @@ export default function Home() {
           </li>
         </ul>
       </nav>
-      <div>
-        <label htmlFor="date-picker">Select a date:</label>
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          dateFormat="yyyy-MM-dd"
-          id="date-picker"
-        />
-      </div>
     </main>
   );
 }
