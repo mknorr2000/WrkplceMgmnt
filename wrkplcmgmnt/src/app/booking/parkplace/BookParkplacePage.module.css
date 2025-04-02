@@ -187,6 +187,8 @@
   gap: 10px;
   align-self: flex-start;
   margin-left: 124px;
+  position: absolute;
+  padding-top: 100px;
 }
 
 .date-picker, .start-time, .end-time {
