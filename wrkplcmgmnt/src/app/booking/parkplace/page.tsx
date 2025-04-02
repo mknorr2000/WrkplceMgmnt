@@ -1,145 +1,149 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import styles from './BookParkplacePage.module.css';
-import ReactDatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+"use client";
+import React, { useState, useEffect } from "react";
+import styles from "./BookParkplacePage.module.css";
+import dynamic from "next/dynamic";
+import "react-datepicker/dist/react-datepicker.css";
+
+// Dynamically import DatePicker to avoid SSR issues
+const DatePicker = dynamic<any>(
+  () => import("react-datepicker").then((mod) => mod.default),
+  { ssr: false }
+);
+
+// Utility function for API calls
+const fetchData = async (url: string, options?: RequestInit) => {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error("Failed to fetch data");
+    return await response.json();
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
 
 const ParkplaceBookingPage = () => {
-  const [selectedParkplace, setSelectedParkplace] = useState<string | null>(null);
+  const [selectedParkplace, setSelectedParkplace] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [startTime, setStartTime] = useState<Date | null>(null);
-  const [endTime, setEndTime] = useState<Date | null>(null);
-  const [bookedParkplaces, setBookedParkplaces] = useState<string[]>([]);
+  const [bookedParkplaces, setBookedParkplaces] = useState<number[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
+  // Fetch booked parking spots on component mount
   useEffect(() => {
-    fetch('/api/parkplaces/booked')
-      .then((res) => res.json())
-      .then((data) => setBookedParkplaces(data));
+    setIsClient(true);
+    fetchData("/api/parkplaces/booked")
+      .then((data) => setBookedParkplaces(data))
+      .catch(() => alert("Failed to load booked parking spots."));
   }, []);
 
-  const handleClick = (parkplace: string) => {
-    if (Array.isArray(bookedParkplaces) && !bookedParkplaces.includes(parkplace)) {
+  // Handle parking spot selection
+  const handleParkplaceClick = (parkplace: number) => {
+    if (!selectedDate) {
+      alert("Please select a date first.");
+      return;
+    }
+    if (!bookedParkplaces.includes(parkplace)) {
       setSelectedParkplace((prev) => (prev === parkplace ? null : parkplace));
     }
   };
 
+  // Handle booking submission
   const handleBooking = async () => {
-    if (!selectedParkplace || !selectedDate || !startTime || !endTime) return;
+    if (!selectedParkplace || !selectedDate) return;
 
-    const response = await fetch(`/api/parkplaces/${selectedParkplace}/bookings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        start_time: startTime.toISOString(),
-        end_time: endTime.toISOString(),
-      }),
-    });
+    const reservation_date = selectedDate.toISOString().split("T")[0];
+    const url = `/api/parkplaces/${selectedParkplace}/bookings`;
 
-    if (response.ok) {
+    try {
+      await fetchData(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservation_date }),
+      });
+      alert(`Booking successful for parking spot P${selectedParkplace} on ${reservation_date}.`);
       setBookedParkplaces((prev) => [...prev, selectedParkplace]);
       setSelectedParkplace(null);
-      setStartTime(null);
-      setEndTime(null);
+      setSelectedDate(null);
+    } catch {
+      alert("Failed to book parking spot. Please try again.");
     }
   };
 
-  const getParkplaceClass = (parkplace: string) => {
-    if (Array.isArray(bookedParkplaces) && bookedParkplaces.includes(parkplace)) {
-      return styles.booked;
-    }
-    return selectedParkplace === parkplace ? styles.clicked : '';
+  // Get CSS class for a parking spot
+  const getParkplaceClass = (parkplace: number) => {
+    if (bookedParkplaces.includes(parkplace)) return styles.booked;
+    return selectedParkplace === parkplace ? styles.clicked : "";
   };
+
+  // Render parking spots
+  const renderParkplaces = (startId: number, count: number, className: string) =>
+    Array.from({ length: count }, (_, index) => {
+      const parkplaceId = startId + index;
+      return (
+        <div
+          key={parkplaceId}
+          className={`${className} ${getParkplaceClass(parkplaceId)}`}
+          onClick={() => handleParkplaceClick(parkplaceId)}
+        >
+          P{parkplaceId}
+        </div>
+      );
+    });
 
   return (
-    <div className={styles['plan-container']}>
+    <div className={styles["plan-container"]}>
       <h1>Book a Parking Spot</h1>
-      <div className={styles['date-picker-container']}>
+
+      {/* Date Picker */}
+      <div className={styles["date-picker-container"]}>
         <label htmlFor="date-picker">Select a Date:</label>
-        <ReactDatePicker
-          id="date-picker"
-          selected={selectedDate}
-          onChange={setSelectedDate}
-          className={styles['date-picker']}
-          dateFormat="yyyy-MM-dd"
-        />
-        <label htmlFor="start-time">Start Time:</label>
-        <ReactDatePicker
-          id="start-time"
-          selected={startTime}
-          onChange={setStartTime}
-          className={styles['date-picker']}
-          showTimeSelect
-          showTimeSelectOnly
-          timeIntervals={15}
-          timeFormat="HH:mm"
-          dateFormat="HH:mm"
-        />
-        <label htmlFor="end-time">End Time:</label>
-        <ReactDatePicker
-          id="end-time"
-          selected={endTime}
-          onChange={setEndTime}
-          className={styles['date-picker']}
-          showTimeSelect
-          showTimeSelectOnly
-          timeIntervals={15}
-          timeFormat="HH:mm"
-          dateFormat="HH:mm"
-        />
+        {isClient && (
+          <DatePicker
+            id="date-picker"
+            selected={selectedDate}
+            onChange={(date: Date) => setSelectedDate(date)}
+            className={styles["date-picker"]}
+            dateFormat="yyyy-MM-dd"
+          />
+        )}
       </div>
-      <div className={styles['office-building']}>
-        <div className={styles['parkplaces-column']}>
-          {Array.from({ length: 6 }, (_, index) => {
-            const parkplaceId = `right${index + 1}`;
-            return (
-              <div
-                key={parkplaceId}
-                className={`${styles['rightParking']} ${getParkplaceClass(parkplaceId)}`}
-                onClick={() => handleClick(parkplaceId)}
-              >
-                P{index + 11}
-              </div>
-            );
-          })}
+
+      {/* Parking Layout */}
+      <div className={styles["office-building"]}>
+        <div className={styles["parkplaces-column"]}>
+          {renderParkplaces(11, 6, styles["rightParking"])}
         </div>
         <h1>Office Building</h1>
       </div>
-      <div className={styles['parkplaces-container']}>
-        <div className={styles['center-parkplace']}>
+      <div className={styles["parkplaces-container"]}>
+        <div className={styles["center-parkplace"]}>
           {[...Array(2)].map((_, rowIndex) => (
-            <div key={`row-${rowIndex}`} className={styles['parkplaces-row']}>
-              {Array.from({ length: 5 }, (_, colIndex) => {
-                const parkplaceId = `front${rowIndex * 5 + colIndex + 1}`;
-                return (
-                  <div
-                    key={parkplaceId}
-                    className={`${styles['frontParking']} ${getParkplaceClass(parkplaceId)}`}
-                    onClick={() => handleClick(parkplaceId)}
-                  >
-                    P{rowIndex * 5 + colIndex + 1}
-                  </div>
-                );
-              })}
+            <div key={`row-${rowIndex}`} className={styles["parkplaces-row"]}>
+              {renderParkplaces(rowIndex * 5 + 1, 5, styles["frontParking"])}
             </div>
           ))}
         </div>
       </div>
+
+      {/* Booking Button */}
       <button
-        className={styles['book-button']}
+        className={styles["book-button"]}
         onClick={handleBooking}
-        disabled={!selectedParkplace || !selectedDate || !startTime || !endTime}
+        disabled={!selectedParkplace || !selectedDate}
       >
         Book Parking Spot
       </button>
-      <div className={styles['legend']}>
-        <div className={styles['legend-text']}>
-          <span className={styles['legend-box']} style={{ backgroundColor: 'red' }}></span> - Booked
+
+      {/* Legend */}
+      <div className={styles["legend"]}>
+        <div className={styles["legend-text"]}>
+          <span className={styles["legend-box"]} style={{ backgroundColor: "red" }}></span> - Booked
         </div>
-        <div className={styles['legend-text']}>
-          <span className={styles['legend-box']} style={{ backgroundColor: 'green' }}></span> - Available
+        <div className={styles["legend-text"]}>
+          <span className={styles["legend-box"]} style={{ backgroundColor: "green" }}></span> - Available
         </div>
-        <div className={styles['legend-text']}>
-          <span className={styles['legend-box']} style={{ backgroundColor: '#009999' }}></span> - Selected Place
+        <div className={styles["legend-text"]}>
+          <span className={styles["legend-box"]} style={{ backgroundColor: "#009999" }}></span> - Selected Place
         </div>
       </div>
     </div>

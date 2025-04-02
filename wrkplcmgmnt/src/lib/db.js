@@ -1,13 +1,13 @@
 // src/lib/db.js
 
-import mysql from 'mysql2/promise'; // MySQL-Verbindung mit Promises
+import mysql from 'mysql2/promise'; // MySQL-Connection mit Promises
 
-// Erstelle eine Verbindung zur MySQL-Datenbank
+// Create a connection pool to the MySQL database
 const db = mysql.createPool({
-  host: 'localhost',    // Deine Host-Adresse (z.B. localhost oder IP)
-  user: 'root',         // Dein MySQL-Benutzername
-  password: 'Geirby1799!11042', // Dein MySQL-Passwort
-  database: 'database', // Der Name deiner Datenbank
+  host: 'localhost',    // Your MySQL-Host 
+  user: 'root',         // Your mySQL-Username 
+  password: 'Geirby1799!11042', // Your mySQL-Password
+  database: 'database', // Your mySQL-Database 
 });
 
 export default db;

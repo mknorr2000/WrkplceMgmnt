@@ -184,18 +184,49 @@
 .date-picker-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px; /* Increased gap for better spacing */
   align-self: flex-start;
-  margin-left: 124px;
+  margin-left: 50px;
   position: absolute;
   padding-top: 100px;
 }
 
-.date-picker, .start-time, .end-time {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.date-picker-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.date-picker-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add spacing between label and input */
+}
+
+.date-picker, .time-picker {
+  padding: 10px; /* Add padding for a better feel */
+  font-size: 16px; /* Slightly larger font for readability */
+  border: 2px solid #009999; /* Match the site's color scheme */
+  border-radius: 8px; /* Rounded corners for a modern look */
+  background-color: #f9f9f9; /* Light background for contrast */
+  color: #333; /* Dark text for readability */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+.date-picker:focus, .time-picker:focus {
+  border-color: #006666; /* Darker border on focus */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhanced shadow on focus */
+  outline: none; /* Remove default outline */
+}
+
+.date-picker-row label {
+  font-size: 14px; /* Smaller font for labels */
+  font-weight: bold; /* Bold text for emphasis */
+  color: #009999; /* Match the site's color scheme */
+  margin-bottom: 5px; /* Add spacing below the label */
 }
 
 /* Adjusted container for bottom elements */
@@ -206,4 +237,26 @@
   width: 100%;
   max-width: 1200px;
   margin: 20px auto 0;
+}
+
+/* Styles for custom dropdowns */
+.time-select {
+  display: flex;
+  gap: 5px;
+}
+
+.time-dropdown {
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 60px;
+}
+
+/* Styles for react-time-picker */
+.time-picker {
+  width: 100px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }

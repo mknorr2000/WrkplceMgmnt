@@ -1,24 +1,55 @@
-"use client"
+"use client";
 
-import Link from 'next/link';
 import { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { useRouter } from 'next/navigation';
+import styles from './LoginPage.module.css';
 
-export default function Home() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+export default function LoginPage() {
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setErrorMessage(""); // Clear previous error messages
+
+    const formData = new FormData(event.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        router.push("/booking"); // Redirect to the booking page
+      } else {
+        setErrorMessage(result.message); // Display error from the API
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again."); // Handle network or server errors
+    }
+  };
 
   return (
-    <main>
-      <h1>Welcome to Workplace - Management Web-App!</h1>
-      <p>Here u can book a work or parking space</p>
-      <nav>
-        <ul>
-          <li>
-            <Link href="/booking">To Bookings</Link>
-          </li>
-        </ul>
-      </nav>
+    <main className={styles.main}>
+      <h1>Login to Workplace - Management Web-App</h1>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={styles.inputGroup}>
+          <label htmlFor="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div className={styles.inputGroup}>
+          <label htmlFor="password">Password:</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+        <button type="submit" className={styles.button}>Login</button>
+      </form>
     </main>
   );
 }
