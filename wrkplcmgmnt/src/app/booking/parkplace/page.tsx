@@ -14,7 +14,10 @@ const DatePicker = dynamic<any>(
 const fetchData = async (url: string, options?: RequestInit) => {
   try {
     const response = await fetch(url, options);
-    if (!response.ok) throw new Error("Failed to fetch data");
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch data: ${response.status} ${response.statusText} - ${errorText}`);
+    }
     return await response.json();
   } catch (error) {
     console.error("API Error:", error);
@@ -49,7 +52,17 @@ const ParkplaceBookingPage = () => {
 
   // Handle booking submission
   const handleBooking = async () => {
-    if (!selectedParkplace || !selectedDate) return;
+    if (!selectedParkplace || !selectedDate) {
+      alert("Please select a parking spot and date.");
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
+    if (selectedDate < today) {
+      alert("You cannot select a date in the past.");
+      return;
+    }
 
     const reservation_date = selectedDate.toISOString().split("T")[0];
     const url = `/api/parkplaces/${selectedParkplace}/bookings`;
@@ -104,6 +117,7 @@ const ParkplaceBookingPage = () => {
             onChange={(date: Date) => setSelectedDate(date)}
             className={styles["date-picker"]}
             dateFormat="yyyy-MM-dd"
+            minDate={new Date()} // Prevent selecting past dates
           />
         )}
       </div>
