@@ -17,43 +17,45 @@ export async function POST(req) {
       throw new Error("Missing or invalid reservation_date in request body");
     }
     reservation_date = body.reservation_date;
-  } catch {
+    console.log(`Received booking request for parkplace_id=${id} on reservation_date=${reservation_date}`);
+  } catch (err) {
+    console.error("Error parsing request body:", err);
     return new Response(JSON.stringify({ error: "Invalid request body" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  const user_id = 1;
+  const user_id = 1; // Placeholder for user ID (replace with actual user authentication logic)
 
   try {
-    const [availabilityCheck] = await db.query(
-      'SELECT is_available FROM parkplaces WHERE id = ?',
-      [id]
+    // Check if the parking spot is already booked for the given date
+    const [existingReservations] = await db.query(
+      'SELECT * FROM reservations WHERE parkplace_id = ? AND reservation_date = ?',
+      [id, reservation_date]
     );
 
-    if (!availabilityCheck.length || availabilityCheck[0].is_available === "0") {
-      return new Response(JSON.stringify({ error: 'Parking spot is not available' }), {
+    console.log(`Existing reservations for parkplace_id=${id} on reservation_date=${reservation_date}:`, existingReservations);
+
+    if (existingReservations.length > 0) {
+      console.error(`Parking spot ${id} is already booked for ${reservation_date}`);
+      return new Response(JSON.stringify({ error: 'Parking spot is already booked for the selected date' }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
+    // Insert the new reservation into the reservations table
     const [result] = await db.query(
       'INSERT INTO reservations (user_id, parkplace_id, reservation_date, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
       [user_id, id, reservation_date]
     );
 
-    const [updateResult] = await db.query(
-      'UPDATE parkplaces SET is_available = "0" WHERE id = ?',
-      [id]
-    );
+    console.log("Insert result:", result);
 
-    if (updateResult.affectedRows === 0) {
-      return new Response(JSON.stringify({ error: 'Failed to update parking spot availability' }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!result.insertId) {
+      console.error("Failed to insert new reservation into the database");
+      throw new Error("Database insertion failed");
     }
 
     const newBooking = {
@@ -63,11 +65,14 @@ export async function POST(req) {
       reservation_date,
     };
 
+    console.log("New booking created successfully:", newBooking);
+
     return new Response(JSON.stringify(newBooking), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("Error creating booking:", err); // Log the error details
     return new Response(JSON.stringify({ error: 'Error creating booking' }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
