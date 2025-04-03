@@ -1,22 +1,29 @@
 import db from '../../../../lib/db'; // Adjust the path to your database connection
 
-// GET: Fetch all booked parking spots
-export async function GET() {
+// GET: Fetch all booked parking spots for a specific date
+export async function GET(req) {
   try {
-    // Fetch parking spots where is_available = "0"
+    // Extract the date from the query parameters
+    const date = req.nextUrl.searchParams.get('date');
+    if (!date) {
+      return new Response(JSON.stringify({ error: 'Date parameter is required' }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Fetch parking spots booked for the given date
     const [results] = await db.query(
-      'SELECT id AS parkplace_id FROM parkplaces WHERE is_available = "0"'
+      'SELECT parkplace_id FROM reservations WHERE reservation_date = ?',
+      [date]
     );
 
-    console.log('Raw query results:', results); // Log the raw query results for debugging
-
-    // Update all rows to set is_available = "1"
-    await db.query('UPDATE parkplaces SET is_available = "1"');
+    console.log('Raw query results for date', date, ':', results); // Log the raw query results for debugging
 
     // Map the results to an array of IDs
     const bookedParkplaces = results.map((row) => row.parkplace_id);
 
-    console.log('Booked parking spots:', bookedParkplaces); // Log the fetched data for debugging
+    console.log('Booked parking spots for date', date, ':', bookedParkplaces); // Log the fetched data for debugging
 
     return new Response(JSON.stringify(bookedParkplaces), {
       status: 200,

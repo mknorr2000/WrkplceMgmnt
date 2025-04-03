@@ -34,10 +34,26 @@ const ParkplaceBookingPage = () => {
   // Fetch booked parking spots on component mount
   useEffect(() => {
     setIsClient(true);
-    fetchData("/api/parkplaces/booked")
-      .then((data) => setBookedParkplaces(data))
-      .catch(() => alert("Failed to load booked parking spots."));
   }, []);
+
+  // Fetch booked parking spots for the selected date
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    const fetchBookedParkplaces = async () => {
+      const date = selectedDate.toISOString().split("T")[0];
+      try {
+        const data = await fetchData(`/api/parkplaces/booked?date=${date}`);
+        console.log(`Booked parking spots for ${date}:`, data); // Log API response
+        setBookedParkplaces(data);
+      } catch (error) {
+        console.error("Failed to load booked parking spots:", error); // Log error
+        alert("Failed to load booked parking spots.");
+      }
+    };
+
+    fetchBookedParkplaces();
+  }, [selectedDate]);
 
   // Handle parking spot selection
   const handleParkplaceClick = (parkplace: number) => {
@@ -68,16 +84,22 @@ const ParkplaceBookingPage = () => {
     const url = `/api/parkplaces/${selectedParkplace}/bookings`;
 
     try {
-      await fetchData(url, {
+      const response = await fetchData(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reservation_date }),
       });
+      console.log("Booking response:", response); // Log API response
       alert(`Booking successful for parking spot P${selectedParkplace} on ${reservation_date}.`);
-      setBookedParkplaces((prev) => [...prev, selectedParkplace]);
+      setBookedParkplaces((prev) => {
+        const updated = [...prev, selectedParkplace];
+        console.log("Updated bookedParkplaces state:", updated); // Log updated state
+        return updated;
+      });
       setSelectedParkplace(null);
       setSelectedDate(null);
-    } catch {
+    } catch (error) {
+      console.error("Failed to book parking spot:", error); // Log error
       alert("Failed to book parking spot. Please try again.");
     }
   };
@@ -85,7 +107,8 @@ const ParkplaceBookingPage = () => {
   // Get CSS class for a parking spot
   const getParkplaceClass = (parkplace: number) => {
     if (bookedParkplaces.includes(parkplace)) return styles.booked;
-    return selectedParkplace === parkplace ? styles.clicked : "";
+    if (selectedParkplace === parkplace) return styles.clicked;
+    return styles.available; // Add class for available spots
   };
 
   // Render parking spots
@@ -139,15 +162,6 @@ const ParkplaceBookingPage = () => {
         </div>
       </div>
 
-      {/* Booking Button */}
-      <button
-        className={styles["book-button"]}
-        onClick={handleBooking}
-        disabled={!selectedParkplace || !selectedDate}
-      >
-        Book Parking Spot
-      </button>
-
       {/* Legend */}
       <div className={styles["legend"]}>
         <div className={styles["legend-text"]}>
@@ -157,9 +171,18 @@ const ParkplaceBookingPage = () => {
           <span className={styles["legend-box"]} style={{ backgroundColor: "green" }}></span> - Available
         </div>
         <div className={styles["legend-text"]}>
-          <span className={styles["legend-box"]} style={{ backgroundColor: "#009999" }}></span> - Selected Place
+          <span className={styles["legend-box"]} style={{ backgroundColor: "#009999" }}></span> - Selected
         </div>
       </div>
+
+      {/* Booking Button */}
+      <button
+        className={styles["book-button"]}
+        onClick={handleBooking}
+        disabled={!selectedParkplace || !selectedDate}
+      >
+        Book Parking Spot
+      </button>
     </div>
   );
 };
