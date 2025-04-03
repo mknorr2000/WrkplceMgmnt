@@ -17,7 +17,6 @@ export async function POST(req) {
       throw new Error("Missing or invalid reservation_date in request body");
     }
     reservation_date = body.reservation_date;
-    console.log(`Received booking request for parkplace_id=${id} on reservation_date=${reservation_date}`);
   } catch (err) {
     console.error("Error parsing request body:", err);
     return new Response(JSON.stringify({ error: "Invalid request body" }), {
@@ -35,10 +34,7 @@ export async function POST(req) {
       [id, reservation_date]
     );
 
-    console.log(`Existing reservations for parkplace_id=${id} on reservation_date=${reservation_date}:`, existingReservations);
-
     if (existingReservations.length > 0) {
-      console.error(`Parking spot ${id} is already booked for ${reservation_date}`);
       return new Response(JSON.stringify({ error: 'Parking spot is already booked for the selected date' }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -51,10 +47,7 @@ export async function POST(req) {
       [user_id, id, reservation_date]
     );
 
-    console.log("Insert result:", result);
-
     if (!result.insertId) {
-      console.error("Failed to insert new reservation into the database");
       throw new Error("Database insertion failed");
     }
 
@@ -64,8 +57,6 @@ export async function POST(req) {
       parkplace_id: id,
       reservation_date,
     };
-
-    console.log("New booking created successfully:", newBooking);
 
     return new Response(JSON.stringify(newBooking), {
       status: 201,

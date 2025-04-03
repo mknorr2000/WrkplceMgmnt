@@ -44,10 +44,9 @@ const ParkplaceBookingPage = () => {
       const date = selectedDate.toISOString().split("T")[0];
       try {
         const data = await fetchData(`/api/parkplaces/booked?date=${date}`);
-        console.log(`Booked parking spots for ${date}:`, data); // Log API response
         setBookedParkplaces(data);
       } catch (error) {
-        console.error("Failed to load booked parking spots:", error); // Log error
+        console.error("Failed to load booked parking spots:", error);
         alert("Failed to load booked parking spots.");
       }
     };
@@ -84,22 +83,17 @@ const ParkplaceBookingPage = () => {
     const url = `/api/parkplaces/${selectedParkplace}/bookings`;
 
     try {
-      const response = await fetchData(url, {
+      await fetchData(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reservation_date }),
       });
-      console.log("Booking response:", response); // Log API response
       alert(`Booking successful for parking spot P${selectedParkplace} on ${reservation_date}.`);
-      setBookedParkplaces((prev) => {
-        const updated = [...prev, selectedParkplace];
-        console.log("Updated bookedParkplaces state:", updated); // Log updated state
-        return updated;
-      });
+      setBookedParkplaces((prev) => [...prev, selectedParkplace]);
       setSelectedParkplace(null);
       setSelectedDate(null);
     } catch (error) {
-      console.error("Failed to book parking spot:", error); // Log error
+      console.error("Failed to book parking spot:", error);
       alert("Failed to book parking spot. Please try again.");
     }
   };
