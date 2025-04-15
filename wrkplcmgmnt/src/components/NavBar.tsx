@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Image from 'next/image'; // Importiere Image von Next.js
-import './NavBar.css'; // Importiere die CSS-Datei für die Navigation
+import Image from 'next/image';
+import './NavBar.css';
 
 const NavBar = () => {
   return (
@@ -8,36 +8,36 @@ const NavBar = () => {
       <ul className="navbar-links">
         <li>
           <Link href="/booking" className="nav-item">
-            <Image 
-              src="/images/NavHome.png" 
-              alt="Home Icon" 
-              className="nav-icon" 
-              width={24} 
-              height={24} 
+            <Image
+              src="/images/NavHome.png"
+              alt="Home Icon"
+              className="nav-icon"
+              width={24}
+              height={24}
             />
             <span>Home</span>
           </Link>
         </li>
         <li>
           <Link href="/mybookings" className="nav-item">
-            <Image 
-              src="/images/NavOverview.png" 
-              alt="Overview Icon" 
-              className="nav-icon" 
-              width={24} 
-              height={24} 
+            <Image
+              src="/images/NavOverview.png"
+              alt="Overview Icon"
+              className="nav-icon"
+              width={24}
+              height={24}
             />
             <span>My Bookings</span>
           </Link>
         </li>
         <li>
           <Link href="/admin" className="nav-item">
-            <Image 
-              src="/images/NavAdmin.png" 
-              alt="Admin Icon" 
-              className="nav-icon" 
-              width={24} 
-              height={24} 
+            <Image
+              src="/images/NavAdmin.png"
+              alt="Admin Icon"
+              className="nav-icon"
+              width={24}
+              height={24}
             />
             <span>Admin</span>
           </Link>

@@ -1,16 +1,26 @@
 // src/app/layout.tsx
-import NavBar from '../components/NavBar';  // Hier wird die NavBar-Komponente importiert
-import './globals.css';
+"use client";
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="de">
-      <body className="antialiased">
-        <NavBar /> {/* Hier wird die NavBar-Komponente eingebunden */}
-        {children} {/* Hier wird der Inhalt der aktuellen Seite eingefügt */}
-      </body>
-    </html>
-  );
+import { usePathname } from "next/navigation"; // Import usePathname hook
+import NavBar from "../components/NavBar"; // Import NavBar component
+import "./globals.css"; // Import global styles
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname(); // Get the current route
+
+    // Define the routes where the NavBar should be displayed
+    const showNavBarRoutes = ["/booking", "/mybookings", "/admin"];
+
+    // Check if the current route is in the list
+    const showNavBar = showNavBarRoutes.includes(pathname);
+
+    return (
+        <html lang="de">
+            <body className="antialiased">
+                {/* Render NavBar only if the route matches */}
+                {showNavBar && <NavBar />}
+                {children}
+            </body>
+        </html>
+    );
 }
