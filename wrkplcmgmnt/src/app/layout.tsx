@@ -8,16 +8,16 @@ import "./globals.css"; // Import global styles
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname(); // Get the current route
 
-    // Define the routes where the NavBar should be displayed
-    const showNavBarRoutes = ["/booking", "/mybookings", "/admin"];
+    // Define the routes where the NavBar should NOT be displayed
+    const hideNavBarRoutes = ["/"]; // Only hide NavBar on the login page
 
     // Check if the current route is in the list
-    const showNavBar = showNavBarRoutes.includes(pathname);
+    const showNavBar = !hideNavBarRoutes.includes(pathname);
 
     return (
         <html lang="de">
             <body className="antialiased">
-                {/* Render NavBar only if the route matches */}
+                {/* Render NavBar only if the route is not in the hideNavBarRoutes */}
                 {showNavBar && <NavBar />}
                 {children}
             </body>

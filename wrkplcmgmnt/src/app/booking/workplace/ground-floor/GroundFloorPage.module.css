@@ -1,6 +1,43 @@
 .ground-floor {
-  font-size: 18px;
-  color: #555;
+  font-family: Arial, sans-serif;
+  padding: 20px;
   text-align: center;
-  margin-top: 20px;
+}
+
+.ground-floor h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.workplace-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.workplace {
+  width: 150px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.workplace.available {
+  background-color: #e0ffe0;
+}
+
+.workplace.booked {
+  background-color: #ffe0e0;
+  cursor: not-allowed;
+}
+
+.workplace:hover {
+  transform: scale(1.05);
 }
