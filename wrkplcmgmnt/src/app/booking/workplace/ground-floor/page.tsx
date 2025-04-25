@@ -10,75 +10,125 @@ const DatePicker = dynamic<any>(
   { ssr: false }
 );
 
+// Utility function for API calls
+const fetchData = async (url: string, options?: RequestInit) => {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to fetch data: ${response.status} ${response.statusText} - ${errorText}`
+      );
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
+
 const GroundFloorPage = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedWorkplace, setSelectedWorkplace] = useState<number | null>(
     null
   );
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [bookedWorkplaces, setBookedWorkplaces] = useState<number[]>([]);
-  const [workplaces, setWorkplaces] = useState<
-    { id: number; seat_number: string }[]
-  >([]);
   const [isClient, setIsClient] = useState(false);
 
+  // Fetch booked workplaces on component mount
   useEffect(() => {
     setIsClient(true);
+  }, []);
 
-    // Fetch all workplaces from the API
-    const fetchWorkplaces = async () => {
+  // Fetch booked workplaces for the selected date
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    const fetchBookedWorkplaces = async () => {
+      const date = selectedDate.toISOString().split("T")[0];
       try {
-        const response = await fetch("/api/workplace");
-        if (response.ok) {
-          const data = await response.json();
-          setWorkplaces(data);
-        } else {
-          console.error("Failed to fetch workplaces.");
-        }
+        const data = await fetchData(`/api/workplace/booked?date=${date}`);
+        setBookedWorkplaces(data);
       } catch (error) {
-        console.error("Error fetching workplaces:", error);
+        console.error("Failed to load booked workplaces:", error);
+        alert("Failed to load booked workplaces.");
       }
     };
 
-    fetchWorkplaces();
-  }, []);
+    fetchBookedWorkplaces();
+  }, [selectedDate]);
 
-  const handleWorkplaceClick = (workplaceId: number) => {
-    if (bookedWorkplaces.includes(workplaceId)) return;
-    setSelectedWorkplace(
-      workplaceId === selectedWorkplace ? null : workplaceId
-    );
+  // Handle workplace selection
+  const handleWorkplaceClick = (workplace: number) => {
+    if (!selectedDate) {
+      alert("Please select a date first.");
+      return;
+    }
+    if (!bookedWorkplaces.includes(workplace)) {
+      setSelectedWorkplace((prev) => (prev === workplace ? null : workplace));
+    }
   };
 
+  // Handle booking submission
   const handleBooking = async () => {
-    if (!selectedDate || !selectedWorkplace) {
-      alert("Please select a date and a workplace before booking.");
+    if (!selectedWorkplace || !selectedDate) {
+      alert("Please select a workplace and date.");
       return;
     }
 
-    try {
-      const response = await fetch(
-        `/api/workplace/${selectedWorkplace}/bookings`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            reservations_date: selectedDate.toISOString().split("T")[0], // Format date as yyyy-MM-dd
-          }),
-        }
-      );
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
+    if (selectedDate < today) {
+      alert("You cannot select a date in the past.");
+      return;
+    }
 
-      if (response.ok) {
-        alert("Workplace booked successfully!");
-        setBookedWorkplaces((prev) => [...prev, selectedWorkplace]);
-        setSelectedWorkplace(null);
-      } else {
-        alert("Failed to book workplace.");
-      }
+    const reservation_date = selectedDate.toISOString().split("T")[0];
+    const url = `/api/workplace/${selectedWorkplace}/bookings`;
+
+    try {
+      await fetchData(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservation_date }),
+      });
+      alert(
+        `Booking successful for workplace W${selectedWorkplace} on ${reservation_date}.`
+      );
+      setBookedWorkplaces((prev) => [...prev, selectedWorkplace]);
+      setSelectedWorkplace(null);
+      setSelectedDate(null);
     } catch (error) {
-      console.error("Error booking workplace:", error);
-      alert("An error occurred while booking.");
+      console.error("Failed to book workplace:", error);
+      alert("Failed to book workplace. Please try again.");
     }
   };
+
+  // Get CSS class for a workplace
+  const getWorkplaceClass = (workplace: number) => {
+    if (bookedWorkplaces.includes(workplace)) return styles.booked;
+    if (selectedWorkplace === workplace) return styles.clicked;
+    return styles.available; // Add class for available workplaces
+  };
+
+  // Render workplaces
+  const renderWorkplaces = (
+    startId: number,
+    count: number,
+    className: string
+  ) =>
+    Array.from({ length: count }, (_, index) => {
+      const workplaceId = startId + index;
+      return (
+        <div
+          key={workplaceId}
+          className={`${className} ${getWorkplaceClass(workplaceId)}`}
+          onClick={() => handleWorkplaceClick(workplaceId)}
+        >
+          W{workplaceId}
+        </div>
+      );
+    });
 
   return (
     <div className={styles["plan-container"]}>
@@ -99,23 +149,9 @@ const GroundFloorPage = () => {
         )}
       </div>
 
-      {/* Room Container */}
-      <div className={styles["room-container"]}>
-        {workplaces.map((workplace) => (
-          <div
-            key={workplace.id}
-            className={`${styles["workplace"]} ${
-              bookedWorkplaces.includes(workplace.id)
-                ? styles["booked"]
-                : workplace.id === selectedWorkplace
-                ? styles["selected"]
-                : styles["available"]
-            }`}
-            onClick={() => handleWorkplaceClick(workplace.id)}
-          >
-            {workplace.seat_number}
-          </div>
-        ))}
+      {/* Workplace Layout */}
+      <div className={styles["workplace-container"]}>
+        {renderWorkplaces(1, 10, styles["workplace"])}
       </div>
 
       {/* Legend */}
@@ -143,11 +179,11 @@ const GroundFloorPage = () => {
         </div>
       </div>
 
-      {/* Book Workplace Button */}
+      {/* Booking Button */}
       <button
         className={styles["book-button"]}
         onClick={handleBooking}
-        disabled={!selectedDate || !selectedWorkplace}
+        disabled={!selectedWorkplace || !selectedDate}
       >
         Book Workplace
       </button>
