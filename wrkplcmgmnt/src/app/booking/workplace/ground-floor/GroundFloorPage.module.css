@@ -90,16 +90,29 @@
   border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
-  font-size: 0; /* Hide text inside workplaces */
+  font-size: 14px; /* Set font size to make text visible */
 }
 
 .workplace.available {
-  background-color: #e0ffe0;
+  background-color: #e0ffe0; /* Green for available */
+  border: 2px solid #ccc;
+  color: black;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .workplace.booked {
-  background-color: #ffe0e0;
-  cursor: not-allowed;
+  background-color: #f44336 !important; /* Red for booked */
+  border: 2px solid #900;
+  color: white;
+  cursor: not-allowed; /* Indicate that booked workplaces cannot be selected */
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.workplace.clicked {
+  background-color: #009999 !important; /* Turquoise for selected */
+  border: 2px solid #006666;
+  color: white;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .workplace:hover {
@@ -150,94 +163,91 @@
   cursor: not-allowed;
 }
 
-.room-container {
-  display: flex; /* Group all rooms in a row */
-  justify-content: space-between; /* Distribute rooms evenly */
-  align-items: flex-start; /* Align rooms at the top */
-  position: relative; /* Ensure proper positioning */
-  width: 100%; /* Full width for alignment */
-  margin-top: 40px; /* Add spacing from the top */
-}
-
 .main-room {
   position: relative; /* Enable positioning for the second room */
   display: flex;
   flex-direction: column; /* Arrange groups vertically */
-  gap: 50px; /* Adjusted gap between groups */
-  width: 300px; /* Reduced width */
+  width: 390px; /* Reduced width */
   height: 350px; /* Reduced height */
-  border: 4px solid black; /* Black border for the room */
+  border: 3px solid black; /* Black border for the room */
   border-radius: 6px;
   background-color: #f9f9f9; /* Light background for the room */
   padding: 10px;
   margin: 0; /* Remove individual margin */
 }
 
-.main-room .group {
+.group-up {
   display: grid;
   grid-template-columns: repeat(2, 90px); /* Adjusted for smaller workplaces */
   grid-template-rows: repeat(2, 70px); /* Adjusted for smaller workplaces */
-  gap: 3px; /* Smaller gap between workplaces */
+  gap: 5px; /* Smaller gap between workplaces */
+}
+
+.group-down {
+  display: grid;
+  grid-template-columns: repeat(2, 90px); /* Adjusted for smaller workplaces */
+  grid-template-rows: repeat(2, 70px); /* Adjusted for smaller workplaces */
+  gap: 5px; /* Smaller gap between workplaces */
+  padding-top: 60px;
 }
 
 .second-room {
-  position: absolute; /* Position the second room */
-  left: 500px; /* Adjusted left position */
-  left: 425px;
-  display: flex;
-  flex-direction: column; /* Arrange groups vertically */
-  gap: 5px; /* Match the gap between groups in Room 1 */
-  width: 200px; /* Adjusted width to accommodate larger gaps */
-  height: 150px; /* Adjusted height to accommodate larger gaps */
-  border: 3px solid #333; /* Slightly thinner border */
-  border-radius: 6px;
-  background-color: #f0f0f0; /* Slightly different background */
-  align-content: center; /* Center grid content vertically */
-  padding-top: 10px;
-  padding-left: 20px;
-  margin: 0px;
-}
-
-.second-room .group {
+  left: 175px;
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(2, 90px); /* Match workplace size in Room 1 */
-  grid-template-rows: repeat(1, 70px); /* Adjust for two workplaces per group */
-  gap: 3px; /* Match the gap between workplaces in Room 1 */
+  grid-template-columns: repeat(2, 90px); /* Adjusted for smaller workplaces */
+  grid-template-rows: repeat(2, 70px);
+  justify-content: center; /* Center workplaces horizontally */
+  align-items: center; /* Center workplaces vertically */
+  gap: 5px; /* Smaller gap between workplaces */
+  width: 200px; /* Adjusted width to accommodate larger gaps */
+  height: 150px; /* Adjusted height for 1 row */
+  border: 3px solid #333; /* Border style similar to other rooms */
+  border-radius: 8px;
+  background-color: #f9f9f9; /* Light background color */
+  padding: 15px; /* Padding inside the room */
+  margin: 3px; /* Remove individual margin */
+}
+.block-room {
+  display: flex;
 }
 
 .third-room {
-  position: relative; /* Align with other rooms */
-  display: flex; /* Use flexbox for centering */
+  display: grid;
+  grid-template-columns: repeat(2, 90px); /* Adjusted for smaller workplaces */
+  grid-template-rows: repeat(2, 70px);
   justify-content: center; /* Center workplaces horizontally */
   align-items: center; /* Center workplaces vertically */
-  gap: 20px; /* Maintain spacing between workplaces */
-  width: 200px; /* Adjusted width for 2 workplaces */
-  height: 90px; /* Adjusted height for 1 row */
+  gap: 5px; /* Smaller gap between workplaces */
+  width: 200px; /* Adjusted width to accommodate larger gaps */
+  height: 150px; /* Adjusted height for 1 row */
   border: 3px solid #333; /* Border style similar to other rooms */
   border-radius: 8px;
-  background-color: #f0f0f0; /* Light background color */
+  background-color: #f9f9f9; /* Light background color */
   padding: 15px; /* Padding inside the room */
-  margin: 0; /* Remove individual margin */
+  margin: 3px; /* Remove individual margin */
 }
 
 .main-room .workplace,
-.second-room .workplace {
+.second-room .workplace,
+.third-room .workplace {
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid #ccc;
   border-radius: 8px;
-  background-color: #e0ffe0; /* Default to available */
+  background-color: green; /* Default to available */
   font-size: 14px;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
 }
 
 .main-room .workplace:hover,
-.second-room .workplace:hover {
+.second-room .workplace:hover,
+.third-room .workplace:hover {
   transform: scale(1.05);
 }
 
 .third-room .workplace {
-  font-size: 0; /* Hide text inside workplaces */
+  font-size: 14px; /* Set font size to make text visible */
 }

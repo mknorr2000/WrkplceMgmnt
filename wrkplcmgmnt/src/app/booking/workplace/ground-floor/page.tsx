@@ -64,9 +64,7 @@ const GroundFloorPage = () => {
       alert("Please select a date first.");
       return;
     }
-    if (!bookedWorkplaces.includes(workplace)) {
-      setSelectedWorkplace((prev) => (prev === workplace ? null : workplace));
-    }
+    setSelectedWorkplace((prev) => (prev === workplace ? null : workplace));
   };
 
   // Handle booking submission
@@ -92,12 +90,12 @@ const GroundFloorPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reservation_date }),
       });
+
       alert(
         `Booking successful for workplace W${selectedWorkplace} on ${reservation_date}.`
       );
       setBookedWorkplaces((prev) => [...prev, selectedWorkplace]);
       setSelectedWorkplace(null);
-      setSelectedDate(null);
     } catch (error) {
       console.error("Failed to book workplace:", error);
       alert("Failed to book workplace. Please try again.");
@@ -106,9 +104,16 @@ const GroundFloorPage = () => {
 
   // Get CSS class for a workplace
   const getWorkplaceClass = (workplace: number) => {
-    if (bookedWorkplaces.includes(workplace)) return styles.booked;
-    if (selectedWorkplace === workplace) return styles.clicked;
-    return styles.available; // Add class for available workplaces
+    if (selectedWorkplace === workplace) {
+      console.log(`Workplace ${workplace} is selected (clicked)`); // Debugging
+      return styles.clicked; // Turquoise for selected
+    }
+    if (bookedWorkplaces.includes(workplace)) {
+      console.log(`Workplace ${workplace} is booked`); // Debugging
+      return styles.booked; // Red for booked
+    }
+    console.log(`Workplace ${workplace} is available`); // Debugging
+    return styles.available; // Green for available
   };
 
   // Render workplaces
@@ -151,7 +156,22 @@ const GroundFloorPage = () => {
 
       {/* Workplace Layout */}
       <div className={styles["workplace-container"]}>
-        {renderWorkplaces(1, 10, styles["workplace"])}
+        <div className={styles["second-room"]}>
+          {renderWorkplaces(9, 4, styles["workplace"])}
+        </div>
+        <div className={styles["block-room"]}>
+          <div className={styles["main-room"]}>
+            <div className={styles["group-up"]}>
+              {renderWorkplaces(1, 4, styles["workplace"])}
+            </div>
+            <div className={styles["group-down"]}>
+              {renderWorkplaces(5, 4, styles["workplace"])}
+            </div>
+          </div>
+          <div className={styles["third-room"]}>
+            {renderWorkplaces(13, 4, styles["workplace"])}
+          </div>
+        </div>
       </div>
 
       {/* Legend */}
