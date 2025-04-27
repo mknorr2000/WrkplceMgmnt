@@ -35,6 +35,13 @@ const FirstFloorPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [bookedWorkplaces, setBookedWorkplaces] = useState<number[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null); // Track user role
+
+  // Fetch user role on component mount
+  useEffect(() => {
+    const role = localStorage.getItem("userRole"); // Assume role is stored in localStorage
+    setUserRole(role);
+  }, []);
 
   // Fetch booked workplaces on component mount
   useEffect(() => {
@@ -65,6 +72,15 @@ const FirstFloorPage = () => {
       alert("Please select a date first.");
       return;
     }
+
+    const maxBookings = userRole === "master" ? 5 : 1;
+    if (bookedWorkplaces.length >= maxBookings) {
+      alert(
+        `Booking limit reached. You can only book up to ${maxBookings} workplace(s) per day.`
+      );
+      return;
+    }
+
     setSelectedWorkplace((prev) => (prev === workplace ? null : workplace));
   };
 
@@ -72,6 +88,14 @@ const FirstFloorPage = () => {
   const handleBooking = async () => {
     if (!selectedWorkplace || !selectedDate) {
       alert("Please select a workplace and date.");
+      return;
+    }
+
+    const maxBookings = userRole === "master" ? 5 : 1;
+    if (bookedWorkplaces.length >= maxBookings) {
+      alert(
+        `Booking limit reached. You can only book up to ${maxBookings} workplace(s) per day.`
+      );
       return;
     }
 
@@ -110,13 +134,17 @@ const FirstFloorPage = () => {
   };
 
   // Render workplaces
-  const renderWorkplaces = (startId: number, count: number) =>
+  const renderWorkplaces = (
+    startId: number,
+    count: number,
+    className: string
+  ) =>
     Array.from({ length: count }, (_, index) => {
       const workplaceId = startId + index;
       return (
         <div
           key={workplaceId}
-          className={`${styles.workplace} ${getWorkplaceClass(workplaceId)}`}
+          className={`${className} ${getWorkplaceClass(workplaceId)}`}
           onClick={() => handleWorkplaceClick(workplaceId)}
         >
           W{workplaceId}
@@ -125,7 +153,7 @@ const FirstFloorPage = () => {
     });
 
   return (
-    <div className={styles["first-floor"]}>
+    <div className={styles["plan-container"]}>
       <h1>Book a Workplace - First Floor</h1>
 
       {/* Date Picker */}
@@ -145,7 +173,19 @@ const FirstFloorPage = () => {
 
       {/* Workplace Layout */}
       <div className={styles["workplace-container"]}>
-        {renderWorkplaces(17, 6)} {/* IDs 17 to 22 */}
+        <div className={styles["block-room"]}>
+          <div className={styles["main-room"]}>
+            <div className={styles["top-pair"]}>
+              {renderWorkplaces(17, 2, styles["workplace"])}
+            </div>
+            <div className={styles["middle-pair"]}>
+              {renderWorkplaces(19, 2, styles["workplace"])}
+            </div>
+            <div className={styles["down-pair"]}>
+              {renderWorkplaces(21, 2, styles["workplace"])}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Legend */}
@@ -173,14 +213,20 @@ const FirstFloorPage = () => {
         </div>
       </div>
 
-      {/* Booking Button */}
-      <button
-        className={styles["book-button"]}
-        onClick={handleBooking}
-        disabled={!selectedWorkplace || !selectedDate}
-      >
-        Book Workplace
-      </button>
+      <div className={styles["button-center"]}>
+        <button
+          className={styles["book-button"]}
+          onClick={handleBooking}
+          disabled={
+            !selectedWorkplace ||
+            !selectedDate ||
+            (userRole === "user" && bookedWorkplaces.length >= 1) ||
+            (userRole === "master" && bookedWorkplaces.length >= 5)
+          }
+        >
+          Book Workplace
+        </button>
+      </div>
     </div>
   );
 };

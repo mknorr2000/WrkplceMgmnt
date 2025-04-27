@@ -6,7 +6,29 @@
 }
 
 .date-picker-container {
-  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-self: flex-start;
+  margin-left: 50px;
+  position: relative;
+}
+
+.date-picker {
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #009999;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.date-picker:focus {
+  border-color: #006666;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none;
 }
 
 .workplace-container {
@@ -15,15 +37,68 @@
   gap: 10px;
   margin: 20px 0;
 }
+.plan-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+}
 
 .workplace {
-  width: 50px;
-  height: 50px;
+  width: 85px; /* Reduced width */
+  height: 65px; /* Reduced height */
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
+  border-radius: 8px;
   cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  font-size: 14px; /* Set font size to make text visible */
+}
+
+.button-ground {
+  width: 85px; /* Reduced width */
+  height: 65px; /* Reduced height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  font-size: 14px; /* Set font size to make text visible */
+}
+
+.main-room {
+  align-items: end;
+  position: relative; /* Enable positioning for the second room */
+  display: flex;
+  flex-direction: column; /* Arrange groups vertically */
+  width: 390px; /* Reduced width */
+  height: 420px; /* Reduced height */
+  border: 3px solid black; /* Black border for the room */
+  border-radius: 6px;
+  background-color: #f9f9f9; /* Light background for the room */
+  padding: 10px;
+  margin: 0; /* Remove individual margin */
+}
+
+.top-pair {
+  display: grid;
+  grid-template-columns: repeat(2, 90px); /* Adjusted for smaller workplaces */
+  gap: 5px; /* Smaller gap between workplaces */
+}
+.middle-pair {
+  padding: 70px 0px 65px 0px;
+  display: grid;
+  gap: 5px; /* Smaller gap between workplaces */
+}
+.down-pair {
+  display: grid;
+  grid-template-columns: repeat(2, 90px); /* Adjusted for smaller workplaces */
+  gap: 5px; /* Smaller gap between workplaces */
 }
 
 .available {
@@ -52,18 +127,23 @@
 .legend-text {
   display: flex;
   align-items: center;
-  gap: 5px;
+  font-weight: bold;
+  gap: 10px;
 }
 
 .legend-box {
-  width: 20px;
-  height: 20px;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  border: 3px solid #000;
 }
 
 .book-button {
-  padding: 10px 20px;
+  padding: 25px 50px;
   font-size: 16px;
   cursor: pointer;
+  align-items: center;
   background-color: #007bff;
   color: white;
   border: none;

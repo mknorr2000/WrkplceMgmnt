@@ -1,25 +1,52 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import styles from './BookWorkplacePage.module.css'; // Import the CSS module
+import React from "react";
+import Link from "next/link";
+import styles from "./FloorSelectPage.module.css"; // Import the CSS module
 
 const WorkplaceBookingPage = () => {
   return (
-    <div>
+    <main className={styles["floors-container"]}>
       <h1>Select a Floor</h1>
       <p>Choose a floor to view its workplaces:</p>
-
-      <div className={styles['floor-selector']}>
-        <Link href="/booking/workplace/ground-floor">
-          <button>Ground Floor</button>
-        </Link>
-        <Link href="/booking/workplace/first-floor">
-          <button>First Floor</button>
-        </Link>
+      <div className={styles.symbols}>
+        <img
+          src="/images/FirstFloor.png"
+          alt="Workplace"
+          className={styles.symbol}
+        />
+        <img
+          src="/images/GroundFloor.png"
+          alt="Parkplace"
+          className={styles.symbol}
+        />
       </div>
-    </div>
+      <div className={styles.splitContainer}>
+        <a href="/booking/workplace/first-floor" className={styles.link}>
+          <div className={styles.bookingSection}>
+            <h2>FirstFloor</h2>
+          </div>
+        </a>
+        <a href="/booking/workplace/ground-floor" className={styles.link}>
+          <div className={styles.bookingSection}>
+            <h2>GroundFloor</h2>
+          </div>
+        </a>
+      </div>
+    </main>
   );
 };
 
 export default WorkplaceBookingPage;
+
+/* <div className={styles.floorsSection}>
+          <Link href="/booking/workplace/ground-floor">
+            <button>Ground Floor</button>
+          </Link>
+        </div>
+        <div className={styles.floorsSection}>
+          <Link href="/booking/workplace/first-floor">
+            <button>First Floor</button>
+          </Link>
+        </div>
+*/

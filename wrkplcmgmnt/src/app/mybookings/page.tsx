@@ -48,7 +48,7 @@ const MyBookingsPage = () => {
         <p className={styles.error}>{error}</p>
       ) : (
         <ul className={styles.bookingList}>
-          {bookings.map((booking, index) => (
+          {bookings.slice(0, 5).map((booking, index) => (
             <li key={index} className={styles.bookingItem}>
               <h3>
                 {booking.seat_id !== null

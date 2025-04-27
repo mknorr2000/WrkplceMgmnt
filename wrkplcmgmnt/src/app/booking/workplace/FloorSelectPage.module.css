@@ -1,0 +1,68 @@
+.floors-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.splitContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 15vh;
+  gap: 80px;
+}
+
+.bookingSection {
+  background-color: #fff;
+  height: 120px;
+  width: 300px; /* Feste Breite für jede Sektion */
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center; /* Zentriert die Inhalte vertikal */
+  align-items: center; /* Zentriert die Inhalte horizontal */
+}
+
+.bookingSection h2 {
+  color: black;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+.bookingSection:hover h2 {
+  color: #fff;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+.bookingSection:hover {
+  background-color: #009999;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.bookingSection img {
+  width: 80%; /* Das Bild nimmt 80% der Breite ein */
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.link {
+  text-decoration: none;
+  color: #009999;
+  font-size: 18px;
+  padding: 10px 10px;
+  background-color: #009999;
+  border-radius: 15px;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  margin-top: 10px;
+}
+.symbols {
+  display: flex;
+  align-items: center;
+  gap: 170px;
+  padding-top: 100px;
+}
+.symbols img {
+  width: 280px;
+  height: 280px;
+}
