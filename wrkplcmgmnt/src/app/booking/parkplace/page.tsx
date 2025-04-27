@@ -16,7 +16,9 @@ const fetchData = async (url: string, options?: RequestInit) => {
     const response = await fetch(url, options);
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to fetch data: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `Failed to fetch data: ${response.status} ${response.statusText} - ${errorText}`
+      );
     }
     return await response.json();
   } catch (error) {
@@ -26,10 +28,19 @@ const fetchData = async (url: string, options?: RequestInit) => {
 };
 
 const ParkplaceBookingPage = () => {
-  const [selectedParkplace, setSelectedParkplace] = useState<number | null>(null);
+  const [selectedParkplace, setSelectedParkplace] = useState<number | null>(
+    null
+  );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [bookedParkplaces, setBookedParkplaces] = useState<number[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null); // Track user role
+
+  // Fetch user role on component mount
+  useEffect(() => {
+    const role = localStorage.getItem("userRole"); // Assume role is stored in localStorage
+    setUserRole(role);
+  }, []);
 
   // Fetch booked parking spots on component mount
   useEffect(() => {
@@ -60,9 +71,16 @@ const ParkplaceBookingPage = () => {
       alert("Please select a date first.");
       return;
     }
-    if (!bookedParkplaces.includes(parkplace)) {
-      setSelectedParkplace((prev) => (prev === parkplace ? null : parkplace));
+
+    const maxBookings = userRole === "master" ? 5 : 1;
+    if (bookedParkplaces.length >= maxBookings) {
+      alert(
+        `Booking limit reached. You can only book up to ${maxBookings} parking spot(s) per day.`
+      );
+      return;
     }
+
+    setSelectedParkplace((prev) => (prev === parkplace ? null : parkplace));
   };
 
   // Handle booking submission
@@ -72,26 +90,37 @@ const ParkplaceBookingPage = () => {
       return;
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
-    if (selectedDate < today) {
-      alert("You cannot select a date in the past.");
+    const maxBookings = userRole === "master" ? 5 : 1;
+    if (bookedParkplaces.length >= maxBookings) {
+      alert(
+        `Booking limit reached. You can only book up to ${maxBookings} parking spot(s) per day.`
+      );
       return;
     }
 
-    const reservation_date = selectedDate.toISOString().split("T")[0];
+    const userId = localStorage.getItem("userId"); // Dynamically fetch user_id
+    console.log("Retrieved userId from Local Storage:", userId); // Debugging
+
+    if (!userId) {
+      alert("User ID not found. Please log in again.");
+      return;
+    }
+
+    const reservation_date = selectedDate.toISOString().split("T")[0]; // Ensure consistent date format
     const url = `/api/parkplaces/${selectedParkplace}/bookings`;
 
     try {
-      await fetchData(url, {
+      await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reservation_date }),
+        body: JSON.stringify({ reservation_date, user_id: userId }),
       });
-      alert(`Booking successful for parking spot P${selectedParkplace} on ${reservation_date}.`);
+
+      alert(
+        `Booking successful for parking spot P${selectedParkplace} on ${reservation_date}.`
+      );
       setBookedParkplaces((prev) => [...prev, selectedParkplace]);
       setSelectedParkplace(null);
-      setSelectedDate(null);
     } catch (error) {
       console.error("Failed to book parking spot:", error);
       alert("Failed to book parking spot. Please try again.");
@@ -106,7 +135,11 @@ const ParkplaceBookingPage = () => {
   };
 
   // Render parking spots
-  const renderParkplaces = (startId: number, count: number, className: string) =>
+  const renderParkplaces = (
+    startId: number,
+    count: number,
+    className: string
+  ) =>
     Array.from({ length: count }, (_, index) => {
       const parkplaceId = startId + index;
       return (
@@ -159,13 +192,25 @@ const ParkplaceBookingPage = () => {
       {/* Legend */}
       <div className={styles["legend"]}>
         <div className={styles["legend-text"]}>
-          <span className={styles["legend-box"]} style={{ backgroundColor: "red" }}></span> - Booked
+          <span
+            className={styles["legend-box"]}
+            style={{ backgroundColor: "red" }}
+          ></span>{" "}
+          - Booked
         </div>
         <div className={styles["legend-text"]}>
-          <span className={styles["legend-box"]} style={{ backgroundColor: "green" }}></span> - Available
+          <span
+            className={styles["legend-box"]}
+            style={{ backgroundColor: "green" }}
+          ></span>{" "}
+          - Available
         </div>
         <div className={styles["legend-text"]}>
-          <span className={styles["legend-box"]} style={{ backgroundColor: "#009999" }}></span> - Selected
+          <span
+            className={styles["legend-box"]}
+            style={{ backgroundColor: "#009999" }}
+          ></span>{" "}
+          - Selected
         </div>
       </div>
 
@@ -173,7 +218,12 @@ const ParkplaceBookingPage = () => {
       <button
         className={styles["book-button"]}
         onClick={handleBooking}
-        disabled={!selectedParkplace || !selectedDate}
+        disabled={
+          !selectedParkplace ||
+          !selectedDate ||
+          (userRole === "user" && bookedParkplaces.length >= 1) ||
+          (userRole === "master" && bookedParkplaces.length >= 5)
+        }
       >
         Book Parking Spot
       </button>

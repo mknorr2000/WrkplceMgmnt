@@ -10,13 +10,18 @@ const extractIdFromUrl = (url) => {
 export async function POST(req) {
   const id = extractIdFromUrl(req.nextUrl);
 
-  let reservation_date;
+  let reservation_date, user_id;
   try {
     const body = await req.json();
-    if (!body || !body.reservation_date) {
-      throw new Error("Missing or invalid reservation_date in request body");
+    if (!body || !body.reservation_date || !body.user_id) {
+      throw new Error(
+        "Missing or invalid reservation_date or user_id in request body"
+      );
     }
-    reservation_date = body.reservation_date;
+    reservation_date = new Date(body.reservation_date)
+      .toISOString()
+      .split("T")[0]; // Normalize date format
+    user_id = body.user_id; // Dynamically fetch user_id from the request body
   } catch (err) {
     console.error("Error parsing request body:", err);
     return new Response(JSON.stringify({ error: "Invalid request body" }), {
@@ -24,8 +29,6 @@ export async function POST(req) {
       headers: { "Content-Type": "application/json" },
     });
   }
-
-  const user_id = 1; // Placeholder for user ID (replace with actual user authentication logic)
 
   try {
     // Check if the workplace is already booked for the given date

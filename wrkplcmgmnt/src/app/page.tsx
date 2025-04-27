@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import styles from './LoginPage.module.css';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import styles from "./LoginPage.module.css";
 
 export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -17,18 +17,30 @@ export default function LoginPage() {
     const password = formData.get("password");
 
     try {
-      const response = await fetch("/api/users", {
+      const credentials = btoa(`${email}:${password}`); // Encode credentials in Base64
+      const response = await fetch("/api/auth", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          Authorization: `Basic ${credentials}`,
+        },
       });
 
-      const result = await response.json();
+      if (response.ok) {
+        const result = await response.json();
+        console.log("User role:", result.role); // Debugging: Log the role
+        console.log("User ID:", result.userId); // Debugging: Log the user ID
+        localStorage.setItem("userRole", result.role || ""); // Save user role in Local Storage
+        localStorage.setItem("userId", result.userId || ""); // Save user ID in Local Storage
 
-      if (result.success) {
+        // Debugging: Verify Local Storage
+        console.log(
+          "Stored userId in Local Storage:",
+          localStorage.getItem("userId")
+        );
         router.push("/booking"); // Redirect to the booking page
       } else {
-        setErrorMessage(result.message); // Display error from the API
+        const result = await response.json();
+        setErrorMessage(result.message || "Authentication failed."); // Display error from the API
       }
     } catch (error) {
       setErrorMessage("An error occurred. Please try again."); // Handle network or server errors
@@ -48,7 +60,9 @@ export default function LoginPage() {
           <input type="password" id="password" name="password" required />
         </div>
         {errorMessage && <p className={styles.error}>{errorMessage}</p>}
-        <button type="submit" className={styles.button}>Login</button>
+        <button type="submit" className={styles.button}>
+          Login
+        </button>
       </form>
     </main>
   );

@@ -1,30 +1,30 @@
-import db from '@/lib/db';
+import db from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
-  const user_id = searchParams.get('user_id');
+  const user_id = searchParams.get("user_id");
 
   if (!user_id) {
-    return new Response(JSON.stringify({ error: 'User ID is required' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
   }
 
   try {
-    // Fetch reservations from the database using the same logic as parkplaces API
-    const query = `SELECT * FROM reservations WHERE user_id = ?`;
-    const reservations = await db.query(query, [user_id]);
+    // Fetch reservations for the given user_id
+    const [reservations] = await db.query(
+      "SELECT id, user_id, seat_id, parkplace_id, reservation_date FROM reservations WHERE user_id = ?",
+      [user_id]
+    );
 
-    return new Response(JSON.stringify(reservations), {
+    return NextResponse.json(reservations, {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error('Database error:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch reservations' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    console.error("Error fetching reservations:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch reservations" },
+      { status: 500 }
+    );
   }
 }

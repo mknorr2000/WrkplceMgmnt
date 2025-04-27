@@ -34,6 +34,13 @@ const GroundFloorPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [bookedWorkplaces, setBookedWorkplaces] = useState<number[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null); // Track user role
+
+  // Fetch user role on component mount
+  useEffect(() => {
+    const role = localStorage.getItem("userRole"); // Assume role is stored in localStorage
+    setUserRole(role);
+  }, []);
 
   // Fetch booked workplaces on component mount
   useEffect(() => {
@@ -64,6 +71,15 @@ const GroundFloorPage = () => {
       alert("Please select a date first.");
       return;
     }
+
+    const maxBookings = userRole === "master" ? 5 : 1;
+    if (bookedWorkplaces.length >= maxBookings) {
+      alert(
+        `Booking limit reached. You can only book up to ${maxBookings} workplace(s) per day.`
+      );
+      return;
+    }
+
     setSelectedWorkplace((prev) => (prev === workplace ? null : workplace));
   };
 
@@ -74,21 +90,30 @@ const GroundFloorPage = () => {
       return;
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
-    if (selectedDate < today) {
-      alert("You cannot select a date in the past.");
+    const maxBookings = userRole === "master" ? 5 : 1;
+    if (bookedWorkplaces.length >= maxBookings) {
+      alert(
+        `Booking limit reached. You can only book up to ${maxBookings} workplace(s) per day.`
+      );
       return;
     }
 
-    const reservation_date = selectedDate.toISOString().split("T")[0];
+    const userId = localStorage.getItem("userId"); // Dynamically fetch user_id
+    console.log("Retrieved userId from Local Storage:", userId); // Debugging
+
+    if (!userId) {
+      alert("User ID not found. Please log in again.");
+      return;
+    }
+
+    const reservation_date = selectedDate.toISOString().split("T")[0]; // Ensure consistent date format
     const url = `/api/workplace/${selectedWorkplace}/bookings`;
 
     try {
-      await fetchData(url, {
+      await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reservation_date }),
+        body: JSON.stringify({ reservation_date, user_id: userId }),
       });
 
       alert(
@@ -203,7 +228,12 @@ const GroundFloorPage = () => {
       <button
         className={styles["book-button"]}
         onClick={handleBooking}
-        disabled={!selectedWorkplace || !selectedDate}
+        disabled={
+          !selectedWorkplace ||
+          !selectedDate ||
+          (userRole === "user" && bookedWorkplaces.length >= 1) ||
+          (userRole === "master" && bookedWorkplaces.length >= 5)
+        }
       >
         Book Workplace
       </button>

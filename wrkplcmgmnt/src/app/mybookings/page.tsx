@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import styles from './OverviewPage.module.css';
+import React, { useEffect, useState } from "react";
+import styles from "./OverviewPage.module.css";
 
 const MyBookingsPage = () => {
   const [bookings, setBookings] = useState([]);
@@ -8,26 +8,33 @@ const MyBookingsPage = () => {
 
   useEffect(() => {
     const fetchBookings = async () => {
+      const userId = localStorage.getItem("userId"); // Dynamically fetch user_id
+      console.log("Retrieved userId from Local Storage:", userId); // Debugging
+
+      if (!userId) {
+        setError("User ID not found. Please log in again.");
+        return;
+      }
+
       try {
-        const response = await fetch('/api/reservations?user_id=1'); // Hardcoded user_id as 1
+        const response = await fetch(`/api/reservations?user_id=${userId}`);
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
         const data = await response.json();
-        console.log('Fetched bookings:', data); // Debugging: Log fetched data
+        console.log("Fetched bookings:", data); // Debugging: Log fetched data
 
-        // Extract bookings from the nested array structure
-        const extractedBookings = Array.isArray(data) && Array.isArray(data[0]) ? data[0] : [];
+        // Filter out invalid bookings
+        const validBookings = data.filter(
+          (booking) =>
+            booking.reservation_date &&
+            (booking.seat_id !== null || booking.parkplace_id !== null)
+        );
 
-        // Sort bookings by reservation_date in descending order and take the last 5
-        const sortedBookings = extractedBookings
-          .sort((a, b) => new Date(b.reservation_date) - new Date(a.reservation_date))
-          .slice(0, 5);
-
-        setBookings(sortedBookings);
+        setBookings(validBookings);
       } catch (error) {
-        console.error('Error fetching bookings:', error);
-        setError('Failed to load bookings. Please try again later.');
+        console.error("Error fetching bookings:", error);
+        setError("Failed to load bookings. Please try again later.");
       }
     };
 
@@ -48,7 +55,14 @@ const MyBookingsPage = () => {
                   ? `Workplace ${booking.seat_id}`
                   : `Parkplace ${booking.parkplace_id}`}
               </h3>
-              <p>Date: {new Date(booking.reservation_date).toLocaleDateString()}</p>
+              <p>
+                Date:{" "}
+                {booking.reservation_date
+                  ? new Date(booking.reservation_date).toLocaleDateString(
+                      "en-GB"
+                    ) // Use consistent locale
+                  : "Invalid Date"}
+              </p>
             </li>
           ))}
         </ul>

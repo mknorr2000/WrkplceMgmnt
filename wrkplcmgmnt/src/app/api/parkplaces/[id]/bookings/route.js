@@ -1,9 +1,9 @@
-import db from '../../../../../lib/db'; // Corrected import path
+import db from "../../../../../lib/db"; // Corrected import path
 
 // Helper function to extract the numeric ID from the URL
 const extractIdFromUrl = (url) => {
-  const rawId = url.pathname.split('/').slice(-2, -1)[0];
-  return rawId.replace(/\D/g, ''); // Remove all non-numeric characters
+  const rawId = url.pathname.split("/").slice(-2, -1)[0];
+  return rawId.replace(/\D/g, ""); // Remove all non-numeric characters
 };
 
 // POST: Create a new booking for a parking place
@@ -16,7 +16,9 @@ export async function POST(req) {
     if (!body || !body.reservation_date) {
       throw new Error("Missing or invalid reservation_date in request body");
     }
-    reservation_date = body.reservation_date;
+    reservation_date = new Date(body.reservation_date)
+      .toISOString()
+      .split("T")[0]; // Normalize date format
   } catch (err) {
     console.error("Error parsing request body:", err);
     return new Response(JSON.stringify({ error: "Invalid request body" }), {
@@ -30,20 +32,25 @@ export async function POST(req) {
   try {
     // Check if the parking spot is already booked for the given date
     const [existingReservations] = await db.query(
-      'SELECT * FROM reservations WHERE parkplace_id = ? AND reservation_date = ?',
+      "SELECT * FROM reservations WHERE parkplace_id = ? AND reservation_date = ?",
       [id, reservation_date]
     );
 
     if (existingReservations.length > 0) {
-      return new Response(JSON.stringify({ error: 'Parking spot is already booked for the selected date' }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Parking spot is already booked for the selected date",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Insert the new reservation into the reservations table
     const [result] = await db.query(
-      'INSERT INTO reservations (user_id, parkplace_id, reservation_date, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
+      "INSERT INTO reservations (user_id, parkplace_id, reservation_date, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
       [user_id, id, reservation_date]
     );
 
@@ -64,7 +71,7 @@ export async function POST(req) {
     });
   } catch (err) {
     console.error("Error creating booking:", err); // Log the error details
-    return new Response(JSON.stringify({ error: 'Error creating booking' }), {
+    return new Response(JSON.stringify({ error: "Error creating booking" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
