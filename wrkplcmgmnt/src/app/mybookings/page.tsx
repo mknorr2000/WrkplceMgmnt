@@ -4,7 +4,7 @@ import styles from "./OverviewPage.module.css";
 
 const MyBookingsPage = () => {
   const [bookings, setBookings] = useState([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -26,7 +26,7 @@ const MyBookingsPage = () => {
 
         // Filter out invalid bookings
         const validBookings = data.filter(
-          (booking) =>
+          (booking: any) =>
             booking.reservation_date &&
             (booking.seat_id !== null || booking.parkplace_id !== null)
         );
@@ -48,7 +48,7 @@ const MyBookingsPage = () => {
         <p className={styles.error}>{error}</p>
       ) : (
         <ul className={styles.bookingList}>
-          {bookings.slice(0, 5).map((booking, index) => (
+          {bookings.slice(0, 5).map((booking: any, index: any) => (
             <li key={index} className={styles.bookingItem}>
               <h3>
                 {booking.seat_id !== null
